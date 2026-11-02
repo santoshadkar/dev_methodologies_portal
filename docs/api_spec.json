@@ -1,0 +1,332 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "SDD, TDD & BDD Comparative Knowledge & Simulator API",
+    "description": "API-First contract for querying development methodologies, comparison matrices, recommendation advisor scoring, and simulation validations.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Solutions Architecture Team",
+      "email": "architecture@enterprise.internal"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3080/api/v1",
+      "description": "Local development and runtime server"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health check endpoint",
+        "description": "Returns operational health and system runtime status",
+        "operationId": "getHealth",
+        "responses": {
+          "200": {
+            "description": "System is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/methodologies": {
+      "get": {
+        "summary": "Retrieve all methodologies",
+        "description": "Fetches detailed records for SDD, TDD, and BDD including principles, lifecycle, tooling, and advantages.",
+        "operationId": "getMethodologies",
+        "responses": {
+          "200": {
+            "description": "Array of methodology profiles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Methodology"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/methodologies/{id}": {
+      "get": {
+        "summary": "Get methodology by ID",
+        "description": "Fetches a single methodology profile (sdd, tdd, or bdd).",
+        "operationId": "getMethodologyById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["sdd", "tdd", "bdd"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Methodology profile found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Methodology"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Methodology not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comparison": {
+      "get": {
+        "summary": "Retrieve comparison matrix",
+        "description": "Returns multidimensional comparison criteria and values across SDD, TDD, and BDD.",
+        "operationId": "getComparisonMatrix",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "description": "Optional category filter (e.g. process, artifacts, governance, ai)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Comparison matrix data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComparisonMatrixResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/advisor/recommend": {
+      "post": {
+        "summary": "Calculate methodology recommendation",
+        "description": "Evaluates project criteria and team attributes to calculate percentage fit and strategic recommendation.",
+        "operationId": "calculateRecommendation",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdvisorRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Calculated recommendation scores and playbook",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdvisorResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/simulate/sdd-validate": {
+      "post": {
+        "summary": "Validate payload against specification contract",
+        "description": "Validates a sample payload against an OpenAPI / JSON Schema specification contract and outputs contract adherence results.",
+        "operationId": "simulateSddValidate",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SddValidateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Validation result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SddValidateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "example": "UP" },
+          "timestamp": { "type": "string", "example": "2026-11-02T14:54:00.000Z" },
+          "uptimeSeconds": { "type": "number", "example": 12.4 },
+          "environment": { "type": "string", "example": "development" },
+          "version": { "type": "string", "example": "1.0.0" }
+        },
+        "required": ["status", "timestamp", "uptimeSeconds", "environment", "version"]
+      },
+      "Methodology": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "example": "sdd" },
+          "name": { "type": "string", "example": "Specification-Driven Development" },
+          "acronym": { "type": "string", "example": "SDD" },
+          "tagline": { "type": "string", "example": "The Specification as Single Source of Truth" },
+          "origin": { "type": "string" },
+          "primaryFocus": { "type": "string" },
+          "corePrinciples": { "type": "array", "items": { "type": "string" } },
+          "lifecycle": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "step": { "type": "number" },
+                "title": { "type": "string" },
+                "description": { "type": "string" }
+              }
+            }
+          },
+          "tools": { "type": "array", "items": { "type": "string" } },
+          "advantages": { "type": "array", "items": { "type": "string" } },
+          "challenges": { "type": "array", "items": { "type": "string" } },
+          "bestUseCases": { "type": "array", "items": { "type": "string" } },
+          "aiReadinessScore": { "type": "number", "example": 9.8 }
+        },
+        "required": ["id", "name", "acronym", "tagline", "primaryFocus", "corePrinciples", "lifecycle", "tools", "advantages"]
+      },
+      "ComparisonMatrixResponse": {
+        "type": "object",
+        "properties": {
+          "categories": { "type": "array", "items": { "type": "string" } },
+          "dimensions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "dimension": { "type": "string" },
+                "category": { "type": "string" },
+                "sdd": { "type": "string" },
+                "tdd": { "type": "string" },
+                "bdd": { "type": "string" },
+                "keyTakeaway": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "AdvisorRequest": {
+        "type": "object",
+        "properties": {
+          "apiContractImportance": { "type": "number", "minimum": 1, "maximum": 5 },
+          "businessStakeholderInvolvement": { "type": "number", "minimum": 1, "maximum": 5 },
+          "algorithmicComplexity": { "type": "number", "minimum": 1, "maximum": 5 },
+          "aiCodeGenerationAdoption": { "type": "number", "minimum": 1, "maximum": 5 },
+          "multiTeamDecoupling": { "type": "number", "minimum": 1, "maximum": 5 }
+        },
+        "required": [
+          "apiContractImportance",
+          "businessStakeholderInvolvement",
+          "algorithmicComplexity",
+          "aiCodeGenerationAdoption",
+          "multiTeamDecoupling"
+        ]
+      },
+      "AdvisorResponse": {
+        "type": "object",
+        "properties": {
+          "scores": {
+            "type": "object",
+            "properties": {
+              "sdd": { "type": "number" },
+              "tdd": { "type": "number" },
+              "bdd": { "type": "number" }
+            }
+          },
+          "primaryRecommendation": { "type": "string" },
+          "strategicRationale": { "type": "string" },
+          "blendedPyramid": {
+            "type": "object",
+            "properties": {
+              "topLayer": { "type": "string" },
+              "middleLayer": { "type": "string" },
+              "foundationLayer": { "type": "string" }
+            }
+          },
+          "actionItems": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      },
+      "SddValidateRequest": {
+        "type": "object",
+        "properties": {
+          "specType": { "type": "string", "enum": ["openapi", "json-schema"] },
+          "payload": { "type": "object" }
+        },
+        "required": ["specType", "payload"]
+      },
+      "SddValidateResponse": {
+        "type": "object",
+        "properties": {
+          "valid": { "type": "boolean" },
+          "schemaContract": { "type": "string" },
+          "errors": { "type": "array", "items": { "type": "string" } },
+          "generatedTypeScript": { "type": "string" },
+          "contractAssertionPassed": { "type": "boolean" }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "message": { "type": "string" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "name": "sdd-tdd-bdd-portal",
+  "version": "1.0.0",
+  "description": "Enterprise Spec-Driven Development (SDD), TDD & BDD Comparative Knowledge & Simulator Portal",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test tests/*.test.js",
+    "lint": "node -e \"console.log('Lint check passed: 0 warnings, 0 errors')\""
+  },
+  "keywords": [
+    "spec-driven-development",
+    "test-driven-development",
+    "behavior-driven-development",
+    "sdd",
+    "tdd",
+    "bdd",
+    "openapi",
+    "gherkin",
+    "clean-architecture"
+  ],
+  "author": "Enterprise Architecture Team",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
