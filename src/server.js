@@ -20,8 +20,13 @@ app.use((req, res, next) => {
 });
 
 // Serve static frontend files
-const publicPath = path.join(config.rootDir, 'public');
+const publicPath = path.resolve(config.rootDir, 'public');
 app.use(express.static(publicPath));
+
+// Root route explicit handler
+app.get('/', (req, res) => {
+  res.sendFile(path.resolve(publicPath, 'index.html'));
+});
 
 // Mount REST API endpoints
 app.use(config.apiPrefix, apiRouter);
@@ -31,7 +36,7 @@ app.get('*', (req, res) => {
   if (req.path.startsWith(config.apiPrefix)) {
     return res.status(404).json({ error: 'Endpoint Not Found', path: req.path });
   }
-  res.sendFile(path.join(publicPath, 'index.html'));
+  res.sendFile(path.resolve(publicPath, 'index.html'));
 });
 
 // Export server listener if run directly
