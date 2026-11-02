@@ -23,6 +23,21 @@ app.use((req, res, next) => {
 const publicPath = path.resolve(config.rootDir, 'public');
 app.use(express.static(publicPath));
 
+// Debug diagnostic route
+app.get('/api/debug-paths', (req, res) => {
+  import('node:fs').then(fs => {
+    res.json({
+      rootDir: config.rootDir,
+      publicPath,
+      publicExists: fs.existsSync(publicPath),
+      filesInPublic: fs.existsSync(publicPath) ? fs.readdirSync(publicPath) : [],
+      filesInRoot: fs.existsSync(config.rootDir) ? fs.readdirSync(config.rootDir) : [],
+      cwd: process.cwd(),
+      filesInCwd: fs.readdirSync(process.cwd())
+    });
+  });
+});
+
 // Root route explicit handler
 app.get('/', (req, res) => {
   res.sendFile(path.resolve(publicPath, 'index.html'));
